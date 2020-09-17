@@ -41,5 +41,6 @@ urlpatterns = [
     path('viewissuedbook', views.viewissuedbook_view),
     path('viewstudent', views.viewstudent_view),
     path('viewissuedbookbystudent', views.viewissuedbookbystudent),
+    path('returnissuedbookbystudent', views.returnissuedbookbystudent),
 ]
 

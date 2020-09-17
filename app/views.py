@@ -169,3 +169,12 @@ def viewissuedbookbystudent(request):
         li2.append(t)
 
     return render(request,'library/viewissuedbookbystudent.html',{'li1':li1,'li2':li2})
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def returnissuedbookbystudent(request):
+    form=forms.ReturnBookForm()
+    if request.method=='POST':
+        #now this form have data from html
+        form=forms.ReturnBookForm(request.POST)
+    return render(request,'library/returnissuedbookbystudent.html',{'form':form})
