@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required,user_passes_test
 from datetime import datetime,timedelta,date
 from django.core.mail import send_mail
 from LMS.settings import EMAIL_HOST_USER
+from .models import * 
 
 
 def home_view(request):
@@ -90,7 +91,7 @@ def addbook_view(request):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def viewbook_view(request):
-    books=models.Book.objects.all()
+    books=Book.objects.all()
     return render(request,'library/viewbook.html',{'books':books})
 
 @login_required(login_url='adminlogin')
@@ -101,7 +102,7 @@ def issuebook_view(request):
         #now this form have data from html
         form=forms.IssuedBookForm(request.POST)
         if form.is_valid():
-            obj=models.IssuedBook()
+            obj=IssuedBook()
             obj.enrollment=request.POST.get('enrollment2')
             obj.isbn=request.POST.get('isbn2')
             obj.save()
@@ -111,7 +112,7 @@ def issuebook_view(request):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def viewissuedbook_view(request):
-    issuedbooks=models.IssuedBook.objects.all()
+    issuedbooks=IssuedBook.objects.all()
     li=[]
     for ib in issuedbooks:
         issdate=str(ib.issuedate.day)+'-'+str(ib.issuedate.month)+'-'+str(ib.issuedate.year)
@@ -139,19 +140,19 @@ def viewissuedbook_view(request):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def viewstudent_view(request):
-    students=models.StudentExtra.objects.all()
+    students=StudentExtra.objects.all()
     return render(request,'library/viewstudent.html',{'students':students})
 
 @login_required(login_url='studentlogin')
 def viewissuedbookbystudent(request):
-    student=models.StudentExtra.objects.filter(user_id=request.user.id)
-    issuedbook=models.IssuedBook.objects.filter(enrollment=student[0].enrollment)
+    student=StudentExtra.objects.filter(user_id=request.user.id)
+    issuedbook=IssuedBook.objects.filter(enrollment=student[0].enrollment)
 
     li1=[]
 
     li2=[]
     for ib in issuedbook:
-        books=models.Book.objects.filter(isbn=ib.isbn)
+        books=Book.objects.filter(isbn=ib.isbn)
         for book in books:
             t=(request.user,student[0].enrollment,student[0].branch,book.name,book.author)
             li1.append(t)
@@ -177,4 +178,10 @@ def returnissuedbookbystudent(request):
     if request.method=='POST':
         #now this form have data from html
         form=forms.ReturnBookForm(request.POST)
+        if form.is_valid():
+            e=request.POST.get('enrollment3')
+            Isbn=request.POST.get('isbn3')
+            obj = IssuedBook.objects.filter(isbn=Isbn).filter(enrollment=e)
+            obj.delete()
+            return render(request,'library/bookreturned.html')
     return render(request,'library/returnissuedbookbystudent.html',{'form':form})
