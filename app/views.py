@@ -115,34 +115,6 @@ def issuebook_view(request):
 
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
-def viewissuedbook_view(request):
-    issuedbooks=IssuedBook.objects.all()
-    li=[]
-    for ib in issuedbooks:
-        issdate=str(ib.issuedate.day)+'-'+str(ib.issuedate.month)+'-'+str(ib.issuedate.year)
-        expdate=str(ib.expirydate.day)+'-'+str(ib.expirydate.month)+'-'+str(ib.expirydate.year)
-        #fine calculation
-        days=(date.today()-ib.issuedate)
-        print(date.today())
-        d=days.days
-        fine=0
-        if d>15:
-            day=d-15
-            fine=day*10
-
-
-        books=list(Book.objects.filter(isbn=ib.isbn))
-        students=list(StudentExtra.objects.filter(enrollment=ib.enrollment))
-        i=0
-        for l in books:
-            t=(students[i].get_name,students[i].enrollment,books[i].name,books[i].author,issdate,expdate,fine)
-            i=i+1
-            li.append(t)
-
-    return render(request,'library/viewissuedbook.html',{'li':li})
-
-@login_required(login_url='adminlogin')
-@user_passes_test(is_admin)
 def viewstudent_view(request):
     students=StudentExtra.objects.all()
     return render(request,'library/viewstudent.html',{'students':students})
@@ -156,7 +128,7 @@ def viewissuedbookbystudent(request):
 
     li2=[]
     for ib in issuedbook:
-        books=Book.objects.filter(isbn=ib.isbn)
+        books=Book.objects.filter(name=ib.name)
         for book in books:
             t=(request.user,student[0].enrollment,student[0].branch,book.name,book.author)
             li1.append(t)
