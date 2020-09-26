@@ -104,8 +104,12 @@ def issuebook_view(request):
         if form.is_valid():
             obj=IssuedBook()
             obj.enrollment=request.POST.get('enrollment2')
-            obj.isbn=request.POST.get('isbn2')
+            obj.name=request.POST.get('name2')
+            name=request.POST.get('name2')
+            obj1=Book.objects.get(name=name)
+            obj1.available_copies = int(obj1.available_copies) - 1
             obj.save()
+            obj1.save()
             return render(request,'library/bookissued.html')
     return render(request,'library/issuebook.html',{'form':form})
 
@@ -127,8 +131,8 @@ def viewissuedbook_view(request):
             fine=day*10
 
 
-        books=list(models.Book.objects.filter(isbn=ib.isbn))
-        students=list(models.StudentExtra.objects.filter(enrollment=ib.enrollment))
+        books=list(Book.objects.filter(isbn=ib.isbn))
+        students=list(StudentExtra.objects.filter(enrollment=ib.enrollment))
         i=0
         for l in books:
             t=(students[i].get_name,students[i].enrollment,books[i].name,books[i].author,issdate,expdate,fine)
@@ -180,8 +184,12 @@ def returnissuedbookbystudent(request):
         form=forms.ReturnBookForm(request.POST)
         if form.is_valid():
             e=request.POST.get('enrollment3')
-            Isbn=request.POST.get('isbn3')
-            obj = IssuedBook.objects.filter(isbn=Isbn).filter(enrollment=e)
+            Name=request.POST.get('name3')
+            obj = IssuedBook.objects.filter(name=Name).filter(enrollment=e)
+            name=request.POST.get('name3')
+            obj1=Book.objects.get(name=name)
+            obj1.available_copies = int(obj1.available_copies) + 1
             obj.delete()
+            obj1.save()
             return render(request,'library/bookreturned.html')
     return render(request,'library/returnissuedbookbystudent.html',{'form':form})

@@ -30,14 +30,12 @@ class StudentExtraForm(forms.ModelForm):
 class BookForm(forms.ModelForm):
     class Meta:
         model=models.Book
-        fields=['name','isbn','author','category']
+        fields=['name','isbn','author','category','available_copies']
 class IssuedBookForm(forms.Form):
     #to_field_name value will be stored when form is submitted.....__str__ method of book model will be shown there in html
-    isbn2=forms.ModelChoiceField(queryset=models.Book.objects.all(),empty_label="Name and isbn", to_field_name="isbn",label='Name and Isbn')
+    name2=forms.ModelChoiceField(queryset=models.Book.objects.all(),empty_label="Name", to_field_name="name",label='Name')
     enrollment2=forms.ModelChoiceField(queryset=models.StudentExtra.objects.all(),empty_label="Name and enrollment",to_field_name='enrollment',label='Name and enrollment')
-    
 class ReturnBookForm(forms.Form):
     #to_field_name value will be stored when form is submitted.....__str__ method of book model will be shown there in html
-    isbn3=forms.ModelChoiceField(queryset=models.Book.objects.all(),empty_label="Name and isbn", to_field_name="isbn",label='Name and Isbn')
+    name3=forms.ModelChoiceField(queryset=models.Book.objects.all(),empty_label="Name", to_field_name="name",label='Name')
     enrollment3=forms.ModelChoiceField(queryset=models.StudentExtra.objects.all(),empty_label="Name and enrollment",to_field_name='enrollment',label='Name and enrollment')
-    

@@ -24,13 +24,14 @@ class Book(models.Model):
         ('education', 'Education'),
         ('entertainment', 'Entertainment'),
         ('comics', 'Comics'),
-        ('biography', 'Biographie'),
+        ('biography', 'Biography'),
         ('history', 'History'),
         ]
     name=models.CharField(max_length=30)
-    isbn=models.PositiveIntegerField()
+    isbn=models.PositiveIntegerField(null=True)
     author=models.CharField(max_length=40)
     category=models.CharField(max_length=30,choices=catchoice,default='education')
+    available_copies = models.IntegerField(default='0')
     def __str__(self):
         return str(self.name)+"["+str(self.isbn)+']'
 
@@ -40,6 +41,7 @@ def get_expiry():
 class IssuedBook(models.Model):
     #moved this in forms.py
     #enrollment=[(student.enrollment,str(student.get_name)+' ['+str(student.enrollment)+']') for student in StudentExtra.objects.all()]
+    name=models.CharField(max_length=30, default="")
     enrollment=models.CharField(max_length=30)
     #isbn=[(str(book.isbn),book.name+' ['+str(book.isbn)+']') for book in Book.objects.all()]
     isbn=models.CharField(max_length=30)
